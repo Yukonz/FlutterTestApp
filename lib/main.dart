@@ -1,6 +1,7 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MyApp());
@@ -65,7 +66,10 @@ class _MyHomePageState extends State<MyHomePage> {
         currentPage = const GeneratorPage();
         break;
       case 1:
-        currentPage = const FavoritesPage();
+        currentPage = FavoritesPage();
+        break;
+      case 2:
+        currentPage = const AboutPage();
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
@@ -88,8 +92,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       label: Text('Favorites'),
                     ),
                     NavigationRailDestination(
-                      icon: Icon(Icons.error),
-                      label: Text('Unimplemented'),
+                      icon: Icon(Icons.question_mark),
+                      label: Text('About'),
                     ),
                   ],
                   selectedIndex: selectedIndex,
@@ -162,12 +166,40 @@ class GeneratorPage extends StatelessWidget {
 }
 
 class FavoritesPage extends StatelessWidget {
-  const FavoritesPage({super.key});
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+
+    if (appState.favoritesList.isEmpty) {
+      return Center(
+        child: Text('No favorites yet.'),
+      );
+    }
+
+    return ListView(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Text('You have ${appState.favoritesList.length} favorites:'),
+        ),
+        for (var pair in appState.favoritesList)
+          ListTile(
+            leading: Icon(Icons.favorite),
+            title: Text(pair.asLowerCase),
+          ),
+      ],
+    );
+  }
+}
+
+class AboutPage extends StatelessWidget {
+  const AboutPage({super.key});
 
   @override
-
   Widget build(BuildContext context) {
-    return const Center();
+    return Center(
+        child: Text('Author: Viktor G.'),
+    );
   }
 }
 
